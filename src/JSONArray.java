@@ -44,7 +44,9 @@ public class JSONArray implements JSONValue {
    */
   public boolean equals(Object other) {
     if(other instanceof JSONArray) {
-      return this.values.equals(((JSONArray)other).values);
+      String thisStr = this.values.toString();
+      String otherStr = ((JSONArray)other).values.toString();
+      return thisStr.compareTo(otherStr) == 0;
     } else {
       return false;
     }

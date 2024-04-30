@@ -45,7 +45,7 @@ public class JSON {
    */
   public static JSONValue parse(Reader source) throws ParseException, IOException {
     pos = 0;
-    JSONValue result = parseKernel(source);
+    JSONValue result = parseKernel(source, (char)skipWhitespace(source));
     if (-1 != skipWhitespace(source)) {
       throw new ParseException("Characters remain at end", pos);
     }
@@ -59,9 +59,9 @@ public class JSON {
   /**
    * Parse JSON from a reader, keeping track of the current position
    */
-  static JSONValue parseKernel(Reader source) throws ParseException, IOException {
+  static JSONValue parseKernel(Reader source, char firstChar) throws ParseException, IOException {
     int ch;
-    ch = skipWhitespace(source);
+    ch = firstChar;
     if (-1 == ch) {
       throw new ParseException("Unexpected end of file", pos);
     }
@@ -74,16 +74,16 @@ public class JSON {
         String str = "";
         while(ch != '"'){
           str += (char) ch;
-          ch = skipWhitespace(source);
+          ch = source.read();
         }
         JSONString jstr = new JSONString(str);
-        //System.out.println(jstr);
         return jstr;
       } else if(ch == '['){
-        System.out.println("poop");
         JSONArray arr = new JSONArray();
+        ch = skipWhitespace(source);
         while(ch != ']'){        
-          arr.add(parseKernel(source));
+          arr.add(parseKernel(source, (char)ch));
+          ch = skipWhitespace(source);
         }
         return arr;
       } else if(ch == '{'){
@@ -94,10 +94,10 @@ public class JSON {
         return obj;
       } else if(Character.isDigit(ch) || ch == '-'){
         String str = "";
-        str += ch;
+        str += (char)ch;
         ch = skipWhitespace(source);
         while (Character.isDigit(ch) || ch == 'E' || ch == 'e'){
-          str += ch;
+          str += (char)ch;
           ch = skipWhitespace(source);
         }
         if(str.contains("e")){

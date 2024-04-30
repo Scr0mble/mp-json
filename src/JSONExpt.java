@@ -69,8 +69,8 @@ public class JSONExpt {
     parsingString.setLength(parsingString.length()-1);
     parsingString.append(']');
     System.out.println(parsingString + "   what they want");
-    JSONValue compare = JSON.parse(parsingString.toString());
-    System.out.println(compare + "   what we want");
+    JSON.parse(parsingString.toString()).writeJSON(pen);;
+    System.out.println("   what we want");
       //assertEquals(testArr.equals(compare), true);
   }
 }

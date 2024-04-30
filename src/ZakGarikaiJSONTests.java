@@ -156,7 +156,7 @@ public class ZakGarikaiJSONTests {
     parsingString.append(']');
     try {
       JSONValue compare = JSON.parse(parsingString.toString());
-      assertEquals(testArr.equals(compare), true);
+      assertTrue(testArr.equals(compare));
     } catch (Exception e) {
       fail("Could not parse valid array");
     } // try-catch
