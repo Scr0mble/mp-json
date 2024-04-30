@@ -71,7 +71,17 @@ public class JSONArray implements JSONValue {
       pen.flush();
       return;
     }
-    //for()
+    Object[] tempArray = this.values.toArray();
+    for(int i = 0; i < tempArray.length; i++) {
+      pen.print(tempArray[i]);
+      if(i + 1 != tempArray.length) {
+        pen.print(", ");
+      } else {
+        pen.print("]");
+      }
+    }
+    pen.flush();
+    return;
   } // writeJSON(PrintWriter)
 
   /**

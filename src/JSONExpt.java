@@ -47,5 +47,10 @@ public class JSONExpt {
     pen.println(arr.equals(new JSONArray()));
     pen.println(arr.hashCode());
     arr.writeJSON(pen);
+    //experiments for hash
+    pen.println("");
+    pen.println("Hash Experiments");
+    JSONHash hash = new JSONHash();
+    pen.println(hash.toString());
   }
 }

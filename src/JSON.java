@@ -64,7 +64,32 @@ public class JSON {
     if (-1 == ch) {
       throw new ParseException("Unexpected end of file", pos);
     }
-    // STUB
+    // STUB 
+    while(-1 != ch){
+      if(ch == '"'){
+        ch = skipWhitespace(source);
+        String str = "";
+        while(ch != '"'){
+          str += ch;
+          ch = skipWhitespace(source);
+        }
+        // add new JSONString(str);
+      } else if(ch == '['){
+        JSONArray arr = new JSONArray();
+        while(ch != ']'){          
+          String str = "";
+          while(ch != ','){
+            str += ch;
+            ch = skipWhitespace(source);
+          }
+        }
+        // add new JSONArray(str);
+      } else if(ch == '{'){
+
+      } else {
+        ch = skipWhitespace(source);
+      }
+    }
     throw new ParseException("Unimplemented", pos);
   } // parseKernel
 
