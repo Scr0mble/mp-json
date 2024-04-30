@@ -1,5 +1,6 @@
 package src;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -43,7 +44,7 @@ public class JSONHash implements JSONValue {
     String ret = "";
     for(Object obj : hashArray) {
       try {
-        ret += ((SimpleCDLL<KVPair<Integer, JSONValue>>)obj).toString();
+        ret += ((ArrayList<JSONPair>)obj).toString();
       } catch (NullPointerException e) {}
     }
     return ret; 
@@ -54,7 +55,9 @@ public class JSONHash implements JSONValue {
    */
   public boolean equals(Object other) {
     if(other instanceof JSONHash) {
-      return this.hashArray.equals(((JSONHash)other).hashArray);
+      String str = this.toString();
+      String ot = ((JSONHash)other).toString();
+      return this.toString().equals(((JSONHash)other).toString());
     } else {
       return false;
     }
@@ -82,7 +85,7 @@ public class JSONHash implements JSONValue {
   /**
    * Get the underlying value.
    */
-  public Iterator<KVPair<JSONString,JSONValue>> getValue() {
+  public Iterator<JSONPair> getValue() {
     return this.iterator();
   } // getValue()
 
@@ -94,28 +97,92 @@ public class JSONHash implements JSONValue {
    * Get the value associated with a key.
    */
   public JSONValue get(JSONString key) {
-    return null;        // STUB
+    int index = find(key);
+    @SuppressWarnings("unchecked")
+    ArrayList<JSONPair> alist = (ArrayList<JSONPair>) hashArray[index];
+    if (alist == null) {
+      throw new IndexOutOfBoundsException("Invalid key: " + key);
+    } else {
+      for(int i = 0; i < alist.size(); i++) {
+        if(alist.get(i).key().equals(key)) {
+          return alist.get(i).value();
+        }
+      }
+      return null;
+    } // get
   } // get(JSONString)
 
   /**
    * Get all of the key/value pairs.
    */
-  public Iterator<KVPair<JSONString,JSONValue>> iterator() {
+  public Iterator<JSONPair> iterator() {
     return null;        // STUB
   } // iterator()
 
   /**
    * Set the value associated with a key.
    */
+  @SuppressWarnings("unchecked")
   public void set(JSONString key, JSONValue value) {
-                        // STUB
+    // If there are too many entries, expand the table.
+    if (this.size > (this.hashArray.length * LOAD_FACTOR)) {
+      expand();
+    } // if there are too many entries
+
+    // Find out where the key belongs and put the pair there.
+    int index = find(key);
+    ArrayList<JSONPair> alist = (ArrayList<JSONPair>) this.hashArray[index];
+    // Special case: Nothing there yet
+    if (alist == null) {
+      alist = new ArrayList<JSONPair>();
+      this.hashArray[index] = alist;
+    } else {
+      for(int i=0; i<alist.size(); i++){
+        if(alist.get(i).key().equals(key)){
+          JSONPair newpair = new JSONPair(key, value);
+          alist.set(i, newpair);
+          this.hashArray[index] = alist;
+          return;
+        }
+      }
+    }
+    alist.add(new JSONPair(key, value));
+    ++this.size;
+
+    // And we're done
+    return;
   } // set(JSONString, JSONValue)
 
   /**
    * Find out how many key/value pairs are in the hash table.
    */
   public int size() {
-    return this.size;           // STUB
+    return this.size;
   } // size()
+
+  /**
+   * Find the index of the entry with a given key. If there is no such entry,
+   * return the index of an entry we can use to store that key.
+   */
+  int find(JSONString key) {
+    return Math.abs(key.hashCode()) % this.hashArray.length;
+  } // find(K)
+
+  /**
+  * Expand the size of the table.
+  */
+  void expand() {
+    // Figure out the size of the new table
+    int newSize = 2 * this.hashArray.length;
+    // Remember the old table
+    Object[] oldBuckets = this.hashArray;
+    // Create a new table of that size.
+    this.hashArray = new Object[newSize];
+    // Move all buckets from the old table to their appropriate
+    // location in the new table.
+    for (int i = 0; i < oldBuckets.length; i++) {
+      this.hashArray[i] = oldBuckets[i];
+    } // for
+  } // expand()
 
 } // class JSONHash

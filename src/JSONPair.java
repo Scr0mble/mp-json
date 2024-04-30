@@ -2,7 +2,7 @@ package src;
 /**
  * Simple, immutable, key/value pairs
  */
-public class KVPair<K,V> {
+public class JSONPair {
 
   // +--------+------------------------------------------------------
   // | Fields |
@@ -11,12 +11,12 @@ public class KVPair<K,V> {
   /**
    * The key. May not be null.
    */
-  private K key;
+  private JSONString key;
 
   /**
    * The associated value.
    */
-  private V value;
+  private JSONValue value;
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -25,7 +25,8 @@ public class KVPair<K,V> {
   /**
    * Create a new key/value pair.
    */
-  public KVPair(K key, V value) {
+
+  public JSONPair(JSONString key, JSONValue value) {
     this.key = key;
     this.value = value;
   } // KVPair(K,V)
@@ -37,16 +38,15 @@ public class KVPair<K,V> {
   /**
    * Compare for equality.
    */
-  @SuppressWarnings("unchecked")
   @Override
   public boolean equals(Object other) {
-    return ((other instanceof KVPair) && (this.equals((KVPair<K,V>) other)));
+    return ((other instanceof JSONPair) && (this.equals((JSONPair) other)));
   } // equals(Object)
 
   /**
    * Compare for equality.
    */
-  public boolean equals(KVPair<K,V> other) {
+  public boolean equals(JSONPair other) {
     return ((this.key.equals(other.key)) && (this.value.equals(other.value)));
   } // equals(KVPair<K,V>)
 
@@ -65,14 +65,14 @@ public class KVPair<K,V> {
   /**
    * Get the key.
    */
-  public K key() {
+  public JSONString key() {
     return this.key;
   } // key()
 
   /**
    * Get the value.
    */
-  public V value() {
+  public JSONValue value() {
     return this.value;
   } // value()
 } // KVPair<K,V>

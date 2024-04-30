@@ -1,8 +1,12 @@
 package src;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 
 public class JSONExpt {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws ParseException, IOException {
     PrintWriter pen = new PrintWriter(System.out, true);
     //experiments for string
     pen.println("String Experiments");
@@ -52,5 +56,21 @@ public class JSONExpt {
     pen.println("Hash Experiments");
     JSONHash hash = new JSONHash();
     pen.println(hash.toString());
+
+    String[] words = {"aardvark", "anteater"};
+    JSONArray testArr = new JSONArray();
+    StringBuilder parsingString = new StringBuilder();
+    parsingString.append("[");
+    for (int i = 0; i < words.length; i++) {
+      testArr.add(new JSONString(words[i]));
+      parsingString.append('"'+words[i]+'"').append(",");
+    } // for
+    // remove last comma
+    parsingString.setLength(parsingString.length()-1);
+    parsingString.append(']');
+    System.out.println(parsingString + "   what they want");
+    JSONValue compare = JSON.parse(parsingString.toString());
+    System.out.println(compare + "   what we want");
+      //assertEquals(testArr.equals(compare), true);
   }
 }

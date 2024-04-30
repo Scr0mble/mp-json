@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.text.ParseException;
 
+
 /**
  * Utilities for our simple implementation of JSON.
  */
@@ -64,33 +65,75 @@ public class JSON {
     if (-1 == ch) {
       throw new ParseException("Unexpected end of file", pos);
     }
-    // STUB 
-    while(-1 != ch){
+    //while(-1 != ch){
+      if(ch == ','){
+        ch = skipWhitespace(source);
+      }
       if(ch == '"'){
         ch = skipWhitespace(source);
         String str = "";
         while(ch != '"'){
+          str += (char) ch;
+          ch = skipWhitespace(source);
+        }
+        JSONString jstr = new JSONString(str);
+        //System.out.println(jstr);
+        return jstr;
+      } else if(ch == '['){
+        System.out.println("poop");
+        JSONArray arr = new JSONArray();
+        while(ch != ']'){        
+          arr.add(parseKernel(source));
+        }
+        return arr;
+      } else if(ch == '{'){
+        JSONHash obj = new JSONHash();
+        while(ch != ']'){          
+          //recursively add things
+        }
+        return obj;
+      } else if(Character.isDigit(ch) || ch == '-'){
+        String str = "";
+        str += ch;
+        ch = skipWhitespace(source);
+        while (Character.isDigit(ch) || ch == 'E' || ch == 'e'){
           str += ch;
           ch = skipWhitespace(source);
         }
-        // add new JSONString(str);
-      } else if(ch == '['){
-        JSONArray arr = new JSONArray();
-        while(ch != ']'){          
-          String str = "";
-          while(ch != ','){
-            str += ch;
-            ch = skipWhitespace(source);
-          }
+        if(str.contains("e")){
+          String splt[] = str.split("e");
+          str = String.valueOf((Math.pow((Double.parseDouble(splt[0])), Double.parseDouble(splt[1]))));
         }
-        // add new JSONArray(str);
-      } else if(ch == '{'){
-
+        if(str.contains("E")){
+          String splt[] = str.split("E");
+          str = String.valueOf((Math.pow((Double.parseDouble(splt[0])), Double.parseDouble(splt[1]))));
+        }
+        if(str.contains(".")){
+          JSONReal jreal = new JSONReal(str);
+          return jreal;
+        } else {
+          JSONInteger jint = new JSONInteger(str);
+          return jint;
+        }
+      } else if (ch == 't') {
+        for(int i = 0; i < 3; i++) {
+          skipWhitespace(source);
+        }
+        return JSONConstant.TRUE;
+      } else if (ch == 'f') {
+        for(int i = 0; i < 4; i++) {
+          skipWhitespace(source);
+        }
+        return JSONConstant.FALSE;
+      } else if (ch == 'n') {
+        for(int i = 0; i < 3; i++) {
+          skipWhitespace(source);
+        }
+        return JSONConstant.NULL;
       } else {
-        ch = skipWhitespace(source);
+        throw new ParseException("Non-valid token", pos);
       }
-    }
-    throw new ParseException("Unimplemented", pos);
+    //}
   } // parseKernel
 
   /**
