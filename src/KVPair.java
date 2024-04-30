@@ -1,3 +1,4 @@
+package src;
 /**
  * Simple, immutable, key/value pairs
  */

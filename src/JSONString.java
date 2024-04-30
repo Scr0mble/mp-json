@@ -1,3 +1,4 @@
+package src;
 import java.io.PrintWriter;
 
 /**
@@ -33,22 +34,25 @@ public class JSONString implements JSONValue {
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return "";          // STUB
+    return this.value;          // STUB ?
   } // toString()
 
   /**
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return true;        // STUB
+    if(other instanceof JSONString){
+      return this.value.equals(((JSONString)other).value);
+    }
+    return false;        // STUB ?
   } // equals(Object)
 
   /**
    * Compute the hash code.
    */
   public int hashCode() {
-    return 0;           // STUB
-  } // hashCode()
+    return this.value.hashCode();           // STUB ?
+  } // hashCode() 
 
   // +--------------------+------------------------------------------
   // | Additional methods |
@@ -58,7 +62,31 @@ public class JSONString implements JSONValue {
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-                        // STUB
+    pen.print("\"");
+    for(int i = 0; i < this.value.length(); i++) {
+      char temp = value.charAt(i);
+      if(temp == '\"') {
+        pen.print("\\\"");
+      } else if (temp == '\\') {
+        pen.print("\\\\");
+      } else if (temp == '/') {
+        pen.print("\\/");
+      } else if (temp == '\b') {
+        pen.print("\\b");
+      } else if (temp == '\f') {
+        pen.print("\\f");
+      } else if (temp == '\n') {
+        pen.print("\\n");
+      } else if(temp == '\t') {
+        pen.print("\\t");
+      } else if(temp == '\r') {
+        pen.print("\\r");
+      } else {
+        pen.print(temp);
+      }
+    }
+    pen.print("\"");
+    pen.flush();
   } // writeJSON(PrintWriter)
 
   /**

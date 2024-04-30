@@ -1,3 +1,4 @@
+package src;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 
@@ -55,14 +56,18 @@ public class JSONReal implements JSONValue {
    * Compare to another object.
    */
   public boolean equals(Object other) {
-    return true;        // STUB
+    if(other instanceof JSONReal) {
+      return this.value.equals(((JSONReal)other).value);
+    } else {
+      return false;
+    }        
   } // equals(Object)
 
   /**
    * Compute the hash code.
    */
   public int hashCode() {
-    return 0;           // STUB
+    return this.value.hashCode();           // STUB
   } // hashCode()
 
   // +--------------------+------------------------------------------
@@ -73,7 +78,12 @@ public class JSONReal implements JSONValue {
    * Write the value as JSON.
    */
   public void writeJSON(PrintWriter pen) {
-                        // STUB
+    String temp = this.value.toString();
+    for(int i = 0; i < temp.length(); i++) {
+      char tempChar = temp.charAt(i);
+      pen.print(tempChar);
+    }
+    pen.flush();
   } // writeJSON(PrintWriter)
 
   /**
