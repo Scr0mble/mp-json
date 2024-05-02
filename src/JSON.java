@@ -114,7 +114,7 @@ public class JSON {
         str += (char) ch;
         ch = skipWhitespace(source);
       }
-      if (ch == '}') {
+      if (ch == '}' || ch == ']') {
         source.reset();
         source.skip(--pos);
       }
