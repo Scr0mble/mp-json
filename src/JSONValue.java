@@ -3,6 +3,7 @@ import java.io.PrintWriter;
 
 /**
  * JSON values.
+ * @author: Sam, David R, Lucas W, William P
  */
 public interface JSONValue {
 

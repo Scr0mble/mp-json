@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 /**
  * JSON arrays.
+ * @author: Sam, David R, Lucas W, William P
  */
 public class JSONArray implements JSONValue {
 
@@ -77,7 +78,7 @@ public class JSONArray implements JSONValue {
     for(int i = 0; i < tempArray.length; i++) {
       pen.print(tempArray[i]);
       if(i + 1 != tempArray.length) {
-        pen.print(", ");
+        pen.print(",");
       } else {
         pen.print("]");
       }

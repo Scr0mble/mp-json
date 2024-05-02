@@ -1,4 +1,5 @@
 package src;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -8,6 +9,8 @@ import java.text.ParseException;
 
 /**
  * Utilities for our simple implementation of JSON.
+ * 
+ * @author: Sam, David R, Lucas W, William P
  */
 public class JSON {
   // +---------------+-----------------------------------------------
@@ -45,7 +48,7 @@ public class JSON {
    */
   public static JSONValue parse(Reader source) throws ParseException, IOException {
     pos = 0;
-    JSONValue result = parseKernel(source, (char)skipWhitespace(source));
+    JSONValue result = parseKernel(source, (char) skipWhitespace(source));
     if (-1 != skipWhitespace(source)) {
       throw new ParseException("Characters remain at end", pos);
     }
@@ -62,78 +65,94 @@ public class JSON {
   static JSONValue parseKernel(Reader source, char firstChar) throws ParseException, IOException {
     int ch;
     ch = firstChar;
-    if (-1 == ch) {
+    if (ch == -1) {
       throw new ParseException("Unexpected end of file", pos);
     }
-    //while(-1 != ch){
-      if(ch == ','){
+
+    if (ch == ',') {
+      ch = skipWhitespace(source);
+    }
+    if (ch == '"') {
+      ch = skipWhitespace(source);
+      String str = "";
+      while (ch != '"') {
+        str += (char) ch;
+        ch = source.read();
+        pos++;
+      }
+      JSONString jstr = new JSONString(str);
+      return jstr;
+    } else if (ch == '[') {
+      JSONArray arr = new JSONArray();
+      ch = skipWhitespace(source);
+      while (ch != ']') {
+        arr.add(parseKernel(source, (char) ch));
         ch = skipWhitespace(source);
       }
-      if(ch == '"'){
+      return arr;
+    } else if (ch == '{') {
+      JSONHash obj = new JSONHash();
+      ch = skipWhitespace(source);
+      while (ch != '}') {
+        JSONValue val = (JSONValue) parseKernel(source, (char) ch);
+        skipWhitespace(source);
+        ch = source.read();
+        pos++;
+        JSONValue key = (JSONValue) parseKernel(source, (char) ch);
+        obj.set(val, key);
         ch = skipWhitespace(source);
-        String str = "";
-        while(ch != '"'){
-          str += (char) ch;
-          ch = source.read();
+        if (ch == '}') {
+          return obj;
         }
-        JSONString jstr = new JSONString(str);
-        return jstr;
-      } else if(ch == '['){
-        JSONArray arr = new JSONArray();
+      }
+      return obj;
+    } else if (Character.isDigit(ch) || ch == '-') {
+      String str = "";
+      str += (char) ch;
+      ch = skipWhitespace(source);
+      while (Character.isDigit(ch) || ch == 'E' || ch == 'e' || ch == '.') {
+        str += (char) ch;
         ch = skipWhitespace(source);
-        while(ch != ']'){        
-          arr.add(parseKernel(source, (char)ch));
-          ch = skipWhitespace(source);
-        }
-        return arr;
-      } else if(ch == '{'){
-        JSONHash obj = new JSONHash();
-        while(ch != ']'){          
-          //recursively add things
-        }
-        return obj;
-      } else if(Character.isDigit(ch) || ch == '-'){
-        String str = "";
-        str += (char)ch;
-        ch = skipWhitespace(source);
-        while (Character.isDigit(ch) || ch == 'E' || ch == 'e'){
-          str += (char)ch;
-          ch = skipWhitespace(source);
-        }
-        if(str.contains("e")){
-          String splt[] = str.split("e");
-          str = String.valueOf((Math.pow((Double.parseDouble(splt[0])), Double.parseDouble(splt[1]))));
-        }
-        if(str.contains("E")){
-          String splt[] = str.split("E");
-          str = String.valueOf((Math.pow((Double.parseDouble(splt[0])), Double.parseDouble(splt[1]))));
-        }
-        if(str.contains(".")){
-          JSONReal jreal = new JSONReal(str);
-          return jreal;
-        } else {
-          JSONInteger jint = new JSONInteger(str);
-          return jint;
-        }
-      } else if (ch == 't') {
-        for(int i = 0; i < 3; i++) {
-          skipWhitespace(source);
-        }
-        return JSONConstant.TRUE;
-      } else if (ch == 'f') {
-        for(int i = 0; i < 4; i++) {
-          skipWhitespace(source);
-        }
-        return JSONConstant.FALSE;
-      } else if (ch == 'n') {
-        for(int i = 0; i < 3; i++) {
-          skipWhitespace(source);
-        }
-        return JSONConstant.NULL;
+      }
+      if (ch == '}') {
+        source.reset();
+        source.skip(--pos);
+      }
+      if (str.contains("e")) {
+        String splt[] = str.split("e");
+        str =
+            String.valueOf((Math.pow((Double.parseDouble(splt[0])), Double.parseDouble(splt[1]))));
+      }
+      if (str.contains("E")) {
+        String splt[] = str.split("E");
+        str =
+            String.valueOf((Math.pow((Double.parseDouble(splt[0])), Double.parseDouble(splt[1]))));
+      }
+      if (str.contains(".")) {
+        JSONReal jreal = new JSONReal(str);
+        return jreal;
       } else {
-        throw new ParseException("Non-valid token", pos);
+        JSONInteger jint = new JSONInteger(str);
+        return jint;
       }
-    //}
+    } else if (ch == 't') {
+      for (int i = 0; i < 3; i++) {
+        skipWhitespace(source);
+      }
+      return JSONConstant.TRUE;
+    } else if (ch == 'f') {
+      for (int i = 0; i < 4; i++) {
+        skipWhitespace(source);
+      }
+      return JSONConstant.FALSE;
+    } else if (ch == 'n') {
+      for (int i = 0; i < 3; i++) {
+        skipWhitespace(source);
+      }
+      return JSONConstant.NULL;
+    } else {
+      throw new ParseException("Non-valid token" + ch, pos);
+    }
   } // parseKernel
 
   /**
@@ -149,8 +168,7 @@ public class JSON {
   } // skipWhitespace(Reader)
 
   /**
-   * Determine if a character is JSON whitespace (newline, carriage return,
-   * space, or tab).
+   * Determine if a character is JSON whitespace (newline, carriage return, space, or tab).
    */
   static boolean isWhitespace(int ch) {
     return (' ' == ch) || ('\n' == ch) || ('\r' == ch) || ('\t' == ch);

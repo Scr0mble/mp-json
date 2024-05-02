@@ -1,6 +1,7 @@
 package src;
 /**
  * Simple, immutable, key/value pairs
+ * @author: Sam, David R, Lucas W, William P
  */
 public class JSONPair {
 
@@ -11,7 +12,7 @@ public class JSONPair {
   /**
    * The key. May not be null.
    */
-  private JSONString key;
+  private JSONValue key;
 
   /**
    * The associated value.
@@ -26,7 +27,7 @@ public class JSONPair {
    * Create a new key/value pair.
    */
 
-  public JSONPair(JSONString key, JSONValue value) {
+  public JSONPair(JSONValue key, JSONValue value) {
     this.key = key;
     this.value = value;
   } // KVPair(K,V)
@@ -65,7 +66,7 @@ public class JSONPair {
   /**
    * Get the key.
    */
-  public JSONString key() {
+  public JSONValue key() {
     return this.key;
   } // key()
 

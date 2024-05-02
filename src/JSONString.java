@@ -3,6 +3,7 @@ import java.io.PrintWriter;
 
 /**
  * JSON strings.
+ * @author: Sam, David R, Lucas W, William P
  */
 public class JSONString implements JSONValue {
 
@@ -34,7 +35,7 @@ public class JSONString implements JSONValue {
    * Convert to a string (e.g., for printing).
    */
   public String toString() {
-    return this.value;          // STUB ?
+    return this.value; 
   } // toString()
 
   /**
@@ -44,14 +45,14 @@ public class JSONString implements JSONValue {
     if(other instanceof JSONString){
       return this.value.equals(((JSONString)other).value);
     }
-    return false;        // STUB ?
+    return false; 
   } // equals(Object)
 
   /**
    * Compute the hash code.
    */
   public int hashCode() {
-    return this.value.hashCode();           // STUB ?
+    return this.value.hashCode();
   } // hashCode() 
 
   // +--------------------+------------------------------------------

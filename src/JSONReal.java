@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 /**
  * JSON reals.
+ * @author: Sam, David R, Lucas W, William P
  */
 public class JSONReal implements JSONValue {
 
@@ -67,7 +68,7 @@ public class JSONReal implements JSONValue {
    * Compute the hash code.
    */
   public int hashCode() {
-    return this.value.hashCode();           // STUB
+    return this.value.hashCode();  
   } // hashCode()
 
   // +--------------------+------------------------------------------
